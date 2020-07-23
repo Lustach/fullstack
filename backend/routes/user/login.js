@@ -53,7 +53,8 @@ router.post(
         (err, token) => {
           if (err) throw err
           res.status(200).json({
-            token
+            token:token,
+            user:user.username
           })
         }
       )
