@@ -15,7 +15,9 @@ const API = {
   },
   user: {
     login: (email: string, password: string) => axios.post(`${BASE_URL}/user/login`,
-      {email: email, password: password })
+      { email: email, password: password }),
+    signUp: (username: string, email: string, password: string) => axios.post(`${BASE_URL}/user/signup`,
+      { email: email, password: password, username: username })
   }
 }
 
