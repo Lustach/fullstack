@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const router = express.Router()
 const auth = require("../../middleware/auth");
-
+const nodemailer = require('nodemailer');
 const User = require('../../models/User')
 router.post(
   '/login',
@@ -54,7 +54,7 @@ router.post(
           if (err) throw err
           res.status(200).json({
             token:token,
-            user:user.username
+            username:user.username
           })
         }
       )

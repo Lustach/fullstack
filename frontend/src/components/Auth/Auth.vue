@@ -3,7 +3,7 @@
     <img alt="" class="wave" src="../../assets/auth/wave.png">
     <div class="container">
       <div class="img">
-        <img alt="" src="../../assets/auth/bg.svg">
+        <img alt="" src="../../assets/auth/undraw_electric_car_b7hl.svg">
       </div>
       <div class="login-content">
         <div class="login__wrapper">
@@ -53,8 +53,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-
-// import store from '../../store'
+import user from '../../store/modules/auth'
 interface User {
   email: string;
   password: string;
@@ -83,8 +82,6 @@ export default class HelloWorld extends Vue {
   }
 
   mounted() {
-    // console.log(store,'mount')
-
     this.setInputStyle()
     // if (this.$route.fullPath == '/sign_up') {
     //   this.component = 'SignUp'
@@ -104,56 +101,58 @@ export default class HelloWorld extends Vue {
           input.parentNode.parentNode.classList.remove('focus')
       })
     })
+    inputs.forEach((input)=>{
+      if (input.value!=='')
+      input.parentNode.parentNode.classList.add('focus')
+    })
   }
 
   async login() {
     if (this.user.password.length > 5) {
       try {
         const result = await this.$API.user.login(this.user.email, this.user.password)
+        // const result = await user.login(this.user)
+        console.log('test')
         // const isAdmin = result.data.user.isAdmin
-        console.log(result)
-        localStorage.setItem('user', JSON.stringify(result.data.user))
-        localStorage.setItem('jwt', result.data.token)
-        if (localStorage.getItem('jwt') != null) {
-          this.$emit('loggedIn')
-          if (this.$route.params.nextUrl != null) {
-            this.$router.push(this.$route.params.nextUrl)
-          }
-            // else {
-            //   if(is_admin== 1){
-            //     this.$router.push('admin')
-          //   }
-          else {
-            this.$router.push('test')
-          }
-          // }
-        }
+        this.setLcStore(result.data)
+        this.getLcJwt()
       } catch (err) {
         console.error(err)
       }
     }
-    // const result = await this.$API.user.login(this.user.email, this.user.password)
-    // console.log(result.data.token)
+  }
+  getLcJwt(){
+    if (localStorage.getItem('jwt') != null) {
+      if (this.$route.params.nextUrl != null) {
+        this.$router.push(this.$route.params.nextUrl)
+      }
+        // else {
+        //   if(is_admin== 1){
+        //     this.$router.push('admin')
+      //   }
+      else {
+        this.$router.push('test')
+      }
+    }
+  }
+  setLcStore(result: any) {
+    console.warn(result)
+    localStorage.setItem('user', JSON.stringify(result.username))
+    localStorage.setItem('jwt', result.token)
   }
 
-  async signUp(e){
-    console.log(this.user)
+  async signUp(e) {
+    console.log(this.user,'SUKAAAA')
     e.preventDefault()
     try {
       const result = await this.$API.user.signUp(this.user.userName, this.user.email, this.user.password)
-      this.login()
-    }
-    catch (e) {
+      this.setLcStore(result.data)
+      this.getLcJwt()
+
+    } catch (e) {
       console.log(e)
     }
   }
-
-  // get loader() {
-  //   if (!this.type) {
-  //     return null
-  //   }
-  //   return () => import(`templates/${this.type}`)
-  // },
 }
 </script>
-<style lang="scss" src="./_Auth.scss"></style>
+<style lang="scss" src="./_Auth.scss" scoped></style>

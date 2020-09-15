@@ -65,9 +65,10 @@ router.post(
 					expiresIn: 10000
 				},
 				(err, token) => {
+					const username = user.username
 					if (err) throw err
 					res.status(200).json({
-						token
+						token, username
 					})
 				}
 			)
